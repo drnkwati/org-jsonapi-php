@@ -50,19 +50,11 @@ class Data extends NodeList
 
         $nodes = array_filter($value, 'is_object');
 
-        if ($nodes && !static::isAssociative($nodes)) {
-            parent::set($nodes);
+        // build more objects from arrays
+        foreach (array_filter($value, 'is_array') as $item) {
+            $nodes[] = new Resource(array_shift($item), array_shift($item), $item);
         }
 
-        // array[resource]
-        if ($pairs = array_filter($value, 'is_array')) {
-            $pairs = array_map(function (array $value) {
-                return new Resource(array_shift($value), array_shift($value), $value);
-            }, $pairs);
-
-            parent::set($pairs);
-        }
-
-        return $this;
+        return parent::set($nodes);
     }
 }

@@ -43,23 +43,20 @@ class Errors extends NodeList
     {
         $value = func_get_args();
 
-        $pairs = array_filter($value, 'is_array');
-
         $nodes = array_filter($value, 'is_object');
 
-        if ($nodes && !static::isAssociative($nodes)) {
-            parent::set($nodes);
-        }
+        $pairs = array_filter($value, 'is_array');
 
-        // conver text to pairs
+        // build more arrays from strings
         foreach (array_filter($value, 'is_scalar') as $item) {
             $pairs[] = [$item];
         }
 
-        if ($pairs) {
-            parent::set(array_map(function ($msg) {return new Error(...$msg);}, $pairs));
+        // build more objects from arrays
+        foreach ($pairs as $item) {
+            $nodes[] = new Error(...$item);
         }
 
-        return $this;
+        return parent::set($nodes);
     }
 }
