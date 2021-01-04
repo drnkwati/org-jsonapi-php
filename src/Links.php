@@ -16,7 +16,9 @@ class Links extends Node implements LinksInterface
      */
     public function __construct()
     {
-        call_user_func_array([$this, 'add'], func_get_args());
+        if ($params = func_get_args()) {
+            call_user_func_array([$this, 'set'], $params);
+        }
     }
 
     /**
@@ -41,14 +43,14 @@ class Links extends Node implements LinksInterface
      * @param  mixed $value
      * @return static
      */
-    public function add($value): ElementInterface
+    public function set($value): ElementInterface
     {
         $value = array_map(function ($item) {
             if (is_array($item)) {
                 if (static::isAssociative($item)) {
                     $item = new Link(current($item), key($item), $item);
                 } else {
-                    $item = new Link(array_shift($item), array_shift($item), $item);
+                    $item = new Link(...$item);
                 }
             }
             return $item;
@@ -66,9 +68,13 @@ class Links extends Node implements LinksInterface
      */
     public function setLink(string $key, $url): LinksInterface
     {
-        !static::startsWith($key, 'set') ?: $key = strtolower(ltrim($key, 'set'));
+        if (is_string($url) || is_object($url)) {
+            !static::startsWith($key, 'set') ?: $key = strtolower(ltrim($key, 'set'));
 
-        return $this->add($url instanceof LinkInterface ? $url->setName($key) : [$key, $url]);
+            $this->set($url instanceof LinkInterface ? $url->setName($key) : [$key, $url]);
+        }
+
+        return $this;
     }
 
     /**
@@ -99,6 +105,14 @@ class Links extends Node implements LinksInterface
      * {@inheritdoc }
      */
     public function setLast($url): LinksInterface
+    {
+        return $this->setLink(__FUNCTION__, $url);
+    }
+
+    /**
+     * {@inheritdoc }
+     */
+    public function setFirst($url): LinksInterface
     {
         return $this->setLink(__FUNCTION__, $url);
     }
