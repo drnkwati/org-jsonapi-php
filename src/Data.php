@@ -46,14 +46,24 @@ class Data extends NodeList
      */
     public function set($value): ElementInterface
     {
-        if (is_array($value) && !static::isAssociative($value)) {
-            return parent::set($value);
+        $value = func_get_args();
+
+        $pairs = array_filter($value, 'is_array');
+
+        $nodes = array_filter($value, 'is_object');
+        // resource collection
+        if ($nodes && !static::isAssociative($nodes)) {
+            parent::set($nodes);
+        }
+        // array[resource]
+        if ($pairs) {
+            $pairs = array_map(function (array $value) {
+                return new Resource(array_shift($value), array_shift($value), $value);
+            }, $pairs);
+
+            parent::set($pairs);
         }
 
-        $value = array_map(function ($item) {
-            return is_array($item) ? new Resource(array_shift($item), array_shift($item), $item) : $item;
-        }, func_get_args());
-
-        return parent::set($value);
+        return $this;
     }
 }
