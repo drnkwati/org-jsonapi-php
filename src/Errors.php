@@ -15,7 +15,7 @@ class Errors extends NodeList
      */
     public function __construct(ErrorInterface...$values)
     {
-        !$values ?: $this->set($values);
+        !$values ?: $this->set(...$values);
     }
 
     /**
@@ -41,18 +41,25 @@ class Errors extends NodeList
      */
     public function set($value): ElementInterface
     {
-        if (is_array($value) && !static::isAssociative($value)) {
-            return parent::set($value);
+        $value = func_get_args();
+
+        $pairs = array_filter($value, 'is_array');
+
+        $nodes = array_filter($value, 'is_object');
+
+        if ($nodes && !static::isAssociative($nodes)) {
+            parent::set($nodes);
         }
 
-        $value = array_map(function ($item) {
-            !is_scalar($item) ?: $item = [$item];
+        // conver text to pairs
+        foreach (array_filter($value, 'is_scalar') as $item) {
+            $pairs[] = [$item];
+        }
 
-            !is_array($item) ?: $item = new Error(array_shift($item), $item);
+        if ($pairs) {
+            parent::set(array_map(function ($msg) {return new Error(...$msg);}, $pairs));
+        }
 
-            return $item;
-        }, func_get_args());
-
-        return parent::set($value);
+        return $this;
     }
 }
