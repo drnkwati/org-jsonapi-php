@@ -11,6 +11,13 @@ use Org\Jsonapi\Interfaces\NodeInterface;
 
 abstract class AbstractDocument extends Node implements DocumentInterface
 {
+    /**
+     * The ducument status code.
+     *
+     * @var int
+     */
+    protected $statusCode = 200;
+
     public function __construct()
     {
         $this->getJsonapi();
@@ -54,5 +61,25 @@ abstract class AbstractDocument extends Node implements DocumentInterface
     public function getJsonapi(): NodeInterface
     {
         return ($this->has($key = 'jsonapi') ? $this : $this->set([$key => new APIObject]))->get($key);
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * @param int $statusCode
+     *
+     * @return self
+     */
+    public function setStatusCode($statusCode): DocumentInterface
+    {
+        is_null($statusCode) ?: $this->statusCode = (int) $statusCode;
+
+        return $this;
     }
 }

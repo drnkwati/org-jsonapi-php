@@ -14,6 +14,13 @@ interface DocumentInterface extends NodeInterface
     public function version(): string;
 
     /**
+     * The ducument status code.
+     *
+     * @return int
+     */
+    public function getStatusCode(): int;
+
+    /**
      * Set the document's primary data or errors
      *
      * @return DocumentInterface
