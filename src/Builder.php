@@ -26,6 +26,16 @@ class Builder extends AbstractBase
     }
 
     /**
+     * The document string representation.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getDocument()->toJson();
+    }
+
+    /**
      * @return DocumentInterface
      */
     public function getDocument()

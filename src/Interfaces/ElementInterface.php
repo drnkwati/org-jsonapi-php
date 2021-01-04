@@ -130,11 +130,4 @@ interface ElementInterface extends ArrayAccess, Countable, JsonSerializable, Ite
      * @return array
      */
     public function toArray(): array;
-
-    /**
-     * The resource payload representation.
-     *
-     * @return array
-     */
-    // public function toPayload(): array;
 }

@@ -16,6 +16,26 @@ abstract class AbstractNode extends AbstractCollector implements ElementInterfac
     protected $jsonOptions = 0;
 
     /**
+     * @return int
+     */
+    public function getJsonOptions(): int
+    {
+        return $this->jsonOptions;
+    }
+
+    /**
+     * @param int $jsonOptions
+     *
+     * @return self
+     */
+    public function setJsonOptions(int $jsonOptions): self
+    {
+        $this->jsonOptions = $jsonOptions;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc }
      */
     public function defaultValue()
@@ -97,34 +117,12 @@ abstract class AbstractNode extends AbstractCollector implements ElementInterfac
     }
 
     /**
-     * {@deprecated }
-     */
-    // public function toPayload(): array
-    // {
-    //     $key = $this->getName();
-
-    //     $value = $this->jsonSerialize();
-
-    //     return $key ? [$key => $value] : $value;
-    // }
-
-    /**
-     * @return int
-     */
-    public function getJsonOptions(): int
-    {
-        return $this->jsonOptions;
-    }
-
-    /**
-     * @param int $jsonOptions
+     * The resource string representation.
      *
-     * @return self
+     * @return string
      */
-    public function setJsonOptions(int $jsonOptions): self
+    public function __toString()
     {
-        $this->jsonOptions = $jsonOptions;
-
-        return $this;
+        return $this->toJson();
     }
 }
