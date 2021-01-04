@@ -20,7 +20,7 @@ class Data extends NodeList
      */
     public function __construct(ResourceInterface...$values)
     {
-        !$values ?: $this->set($values);
+        !$values ?: $this->set(...$values);
     }
 
     /**
@@ -48,15 +48,14 @@ class Data extends NodeList
     {
         $value = func_get_args();
 
-        $pairs = array_filter($value, 'is_array');
-
         $nodes = array_filter($value, 'is_object');
-        // resource collection
+
         if ($nodes && !static::isAssociative($nodes)) {
             parent::set($nodes);
         }
+
         // array[resource]
-        if ($pairs) {
+        if ($pairs = array_filter($value, 'is_array')) {
             $pairs = array_map(function (array $value) {
                 return new Resource(array_shift($value), array_shift($value), $value);
             }, $pairs);
