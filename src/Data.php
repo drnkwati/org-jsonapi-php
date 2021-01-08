@@ -46,15 +46,17 @@ class Data extends NodeList
      */
     public function set($value): ElementInterface
     {
-        $value = func_get_args();
+        if ($value = func_get_args()) {
+            $nodes = array_filter($value, 'is_object');
 
-        $nodes = array_filter($value, 'is_object');
+            // build more objects from arrays
+            foreach (array_filter($value, 'is_array') as $item) {
+                $nodes[] = new Resource(array_shift($item), array_shift($item), $item);
+            }
 
-        // build more objects from arrays
-        foreach (array_filter($value, 'is_array') as $item) {
-            $nodes[] = new Resource(array_shift($item), array_shift($item), $item);
+            parent::set($nodes);
         }
 
-        return parent::set($nodes);
+        return $this;
     }
 }

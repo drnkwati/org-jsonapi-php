@@ -41,22 +41,24 @@ class Errors extends NodeList
      */
     public function set($value): ElementInterface
     {
-        $value = func_get_args();
+        if ($value = func_get_args()) {
+            $nodes = array_filter($value, 'is_object');
 
-        $nodes = array_filter($value, 'is_object');
+            $pairs = array_filter($value, 'is_array');
 
-        $pairs = array_filter($value, 'is_array');
+            // build more arrays from strings
+            foreach (array_filter($value, 'is_scalar') as $item) {
+                $pairs[] = [$item];
+            }
 
-        // build more arrays from strings
-        foreach (array_filter($value, 'is_scalar') as $item) {
-            $pairs[] = [$item];
+            // build more objects from arrays
+            foreach ($pairs as $item) {
+                $nodes[] = new Error(...$item);
+            }
+
+            parent::set($nodes);
         }
 
-        // build more objects from arrays
-        foreach ($pairs as $item) {
-            $nodes[] = new Error(...$item);
-        }
-
-        return parent::set($nodes);
+        return $this;
     }
 }
